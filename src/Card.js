@@ -18,6 +18,7 @@ class CardSpot extends Component {
       encrypted:'Encryption will show here', 
       key:'',
       date: '', 
+      showDate: '',
       active: false, 
       active2: false, 
       decryptMessage:''};
@@ -27,6 +28,7 @@ class CardSpot extends Component {
     this.encryptMessage = this.encryptMessage.bind(this);
     this.decryptMessage = this.decryptMessage.bind(this);
     this.newKey = this.newKey.bind(this);
+    this.handleDateChange = this.handleDateChange.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
     this.handleToggle2 = this.handleToggle2.bind(this);
     this.handleDecryptMessageChange = this.handleDecryptMessageChange.bind(this);
@@ -62,11 +64,18 @@ class CardSpot extends Component {
     axios.post('/decrypt', data)
     .then(function (response) {
       var parse = JSON.parse(response.data.decryption)
+      // translating new Date Object back into Readable form for React-Tool Calendar
+      var showThisDate = parse.expirationDate;
+      let exMonth = showThisDate.slice(0, 2);
+      let exDay = showThisDate.slice(2, 4);
+      let exYear = showThisDate.slice(4, 8);
+      showThisDate = new Date(exYear,exMonth-1,exDay);
       that.setState({
         encrypted: parse.decrypted, 
         message: parse.decrypted, 
         name: parse.senderName,
-        date: parse.expirationDate
+        date: parse.expirationDate,
+        showDate: showThisDate
       })
       console.log(response.data, parse);
       that.handleToggle();
@@ -77,7 +86,8 @@ class CardSpot extends Component {
       console.log(error);
     });
   }
-
+  
+  //function to create new passphrases
   newKey() {
     let choice = '1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM';
     var key = '';
@@ -87,15 +97,17 @@ class CardSpot extends Component {
     this.setState({key: key})
     window.location.hash = key;
   }
-
+  
+  //handles Encrypt toggle
   handleToggle() {
     this.setState({active: !this.state.active});
   }
-
+   
+  //handles decrypt toggle
   handleToggle2() {
     this.setState({active2: !this.state.active2});
   }
-
+  
   handleNameChange(value) {
     this.setState({name: value})
   }
@@ -103,20 +115,27 @@ class CardSpot extends Component {
   handledMessageChange(value) {
     this.setState({message: value})
   }
-
+  
   handleDecryptMessageChange(value) {
     this.setState({decryptMessage: value})
   }
-
-  handleDateChange(item, value) {
-    this.setState({date: value})
+  
+  // translates date object (pulled from date picker) into a string
+  handleDateChange(value) {
+    let date = JSON.stringify(value);
+    let year = date.slice(1,5);
+    let month = date.slice(6, 8);
+    let day = date.slice(9, 11);
+    let newDate = month+day+year;
+    this.setState({date: newDate})
+    this.setState({showDate:value})
   }
  
   actions = [
     { label: "Cancel", onClick: this.handleToggle.bind(this) },
-    { label: "Decrypt", onClick: this.decryptMessage.bind(this)  }
+    { label: "Decrypt", onClick: this.decryptMessage.bind(this) }
   ];
-
+  
   actions2 = [
     { label: "OK", onClick: this.handleToggle2.bind(this) },
   ];
@@ -142,8 +161,9 @@ class CardSpot extends Component {
               <DatePicker label='Expiration date' 
               sundayFirstDayOfWeek 
               minDate={min_datetime} 
-              onChange={this.handleDateChange.bind(this,'date')} 
-              value={this.state.date} 
+              onChange={this.handleDateChange} 
+              value={this.state.showDate}
+              autoOk='true' 
               />
 
             </CardText>

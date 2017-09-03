@@ -16,12 +16,33 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use(express.static(path.resolve(__dirname, '../build')));
 
-const encrypt = function(str, name, date, hash) {
+//returns boolean whether expiration date is beyond current date
+const dateChecker = function(expirationDate) {
   let currentDate = JSON.stringify(new Date);
-  let currMonth = currentDate.slice(0,2);
-  let currDay = currentDate.slice(2,4);
-  let currYear = currentDate.slice(4,8);
-  console.log(currentDate, currMonth, currYear);
+  let currMonth = currentDate.slice(6, 8);
+  let currDay = currentDate.slice(9, 11);
+  let currYear = currentDate.slice(1, 5);
+  let exMonth = expirationDate.slice(0, 2);
+  let exDay = expirationDate.slice(2, 4);
+  let exYear = expirationDate.slice(4, 8);
+  if (currYear < exYear) {
+    return true;
+  } else if (currYear = exYear) {
+    if (currMonth < exMonth) {
+      return true;
+    } else if (currMonth = exMonth) {
+      if (currDay <= exDay) {
+        return true;
+      }
+    } 
+  }
+  return false;
+}
+
+
+const encrypt = function(str, name, date, hash) {
+  let expiredBoolean = dateChecker(date);
+  console.log('within date?', expiredBoolean);
   var key = crypto.createHash("sha256").update(hash, "ascii").digest();
   var iv = "1234567890123456";
   var cipher = crypto.createCipheriv("aes-256-ctr", key, iv);
@@ -39,16 +60,6 @@ const decrypt = function(str, hash) {
   var senderName = decipher.update(str[1],'hex','utf8');
   var expirationDate = decipher.update(str[2],'hex','utf8');
   return JSON.stringify({"decrypted":`${decryptedMessage}`, "senderName":`${senderName}`, "expirationDate":`${expirationDate}`}); 
-}
-
-//CONTINUE HERE!!!! 
-const dateChange = function(value) {
-  let date = JSON.stringify(value);
-  let year = date.slice(1,5);
-  let month = date.slice(6, 8);
-  let day = date.slice(9, 11);
-  let newDate = month+day+year;
-  console.log(newDate)
 }
 
 // Answer API requests.
