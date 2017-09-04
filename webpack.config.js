@@ -5,7 +5,7 @@ module.exports = {
   entry: './src/index.js',
   output: {
     path: __dirname,
-    publicPath: './public/dist',
+    publicPath: 'public/dist',
     filename: 'bundle.js'
   },
   module: {
@@ -13,7 +13,7 @@ module.exports = {
       {
         test: /\.js$/,
         include: path.join(__dirname, 'src'),
-        exclude: /node_modules/,
+        exclude: ['node_modules'],
         use: [
           { loader: 'babel-loader',
             options: {
