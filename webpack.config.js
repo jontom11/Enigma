@@ -31,7 +31,10 @@ module.exports = {
       }
     ]
   },
-  resolveLoader: {
-    root: path.join(__dirname, 'node_modules')
+  resolve: {
+   modules: [
+     path.join(__dirname, "src"),
+     "node_modules"
+   ]
   }
 };
