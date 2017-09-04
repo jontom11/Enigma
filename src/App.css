@@ -11,10 +11,6 @@
   overflow-wrap: break-word;
 }
 
-Card {
-  border: 10px solid yellow;
-}
-
 .text {
   text-align: center;
 }
