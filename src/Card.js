@@ -191,9 +191,9 @@ class CardSpot extends Component {
                 active={this.state.active2}
                 onEscKeyDown={this.handleToggle2}
                 onOverlayClick={this.handleToggle2}
-                title='Encrypt'
+                title='Encrypted Message'
               >
-                <h3>Copy the code and Passphrase, careful not to copy the whitespace at the end of the code.</h3>
+                <h5>Copy the code and Passphrase, careful not to copy the whitespace at the end of the code.</h5>
                 <p id="encryptMessage">{this.state.encrypted}</p>
               </Dialog>
 
@@ -209,10 +209,10 @@ class CardSpot extends Component {
                 onOverlayClick={this.handleToggle}
                 title='Decrypt'
               >
-                <h3 class='text'>Input the encrypted message below and ensure the key is correct.</h3>
+                <h5 class='text'>Input the encrypted message below and ensure the passphrase is correct for the hash url.</h5>
                 <Input multiline='true' type='text' label='Encrypted Message' value={this.state.decryptMessage} onChange={this.handleDecryptMessageChange} />
               </Dialog>
-              <Button raised label="Change Key" onMouseDown={()=>this.newKey()}/>
+              <Button raised label="Change Passphrase" onMouseDown={()=>this.newKey()}/>
             </CardActions>
             <div><h3>Your Passphrase - {this.state.key}</h3></div>
           </Card>     
