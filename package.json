@@ -31,8 +31,5 @@
     "babel-preset-react": "^6.24.1",
     "react-toolbox-themr": "^1.0.2",
     "webpack": "^3.5.5"
-  },
-  "resolveLoader": {
-    "root": "path.join(__dirname, 'node_modules')"
   }
 }
