@@ -2,6 +2,20 @@
   "name": "toviaenigma",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=6.11.1"
+  },
+  "scripts": {
+    "start": "node ./server/server.js",
+    "start-dev": "nodemon ./server/server.js",
+    "react": "react-scripts start",
+    "build": "react-scripts build --watch",
+    "build-dev": "webpack --watch",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "toolbox": "react-toolbox-themr",
+    "heroku-postbuild": "webpack -p --config ./webpack.config.js --progress"
+  },
   "dependencies": {
     "axios": "^0.16.2",
     "babel": "^6.23.0",
@@ -17,17 +31,6 @@
     "react-scripts": "1.0.12",
     "react-toolbox": "^2.0.0-beta.12",
     "webpack": "^3.5.5"
-  },
-  "scripts": {
-    "start": "node server/server.js",
-    "start-dev": "nodemon ./server/server.js",
-    "react": "react-scripts start",
-    "build": "react-scripts build --watch",
-    "build-dev": "webpack --watch",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "toolbox": "react-toolbox-themr",
-    "heroku-postbuild": "webpack -p --config ./webpack.config.js --progress"
   },
   "devDependencies": {
     "path": "^0.12.7",
