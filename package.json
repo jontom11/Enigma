@@ -23,6 +23,7 @@
     "heroku-postbuild": "webpack -p --config ./webpack.config.js --progress"
   },
   "devDependencies": {
+    "babel": "^6.23.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
@@ -30,5 +31,8 @@
     "babel-preset-react": "^6.24.1",
     "react-toolbox-themr": "^1.0.2",
     "webpack": "^3.5.5"
+  },
+  "resolveLoader": {
+    "root": "path.join(__dirname, 'node_modules')"
   }
 }

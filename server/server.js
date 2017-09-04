@@ -53,13 +53,16 @@ const encrypt = function(str, name, date, hash) {
 const decrypt = function(str, hash) {
   console.log(str);
   str = str.split('l');
+  console.log('str[2]',str[2]);
   var key = crypto.createHash("sha256").update(hash, "ascii").digest();
   var iv = "1234567890123456";    
   var decipher = crypto.createDecipheriv('aes-256-ctr', key, iv)
   var decryptedMessage = decipher.update(str[0],'hex','utf8');
   var senderName = decipher.update(str[1],'hex','utf8');
   var expirationDate = decipher.update(str[2],'hex','utf8');
-  return JSON.stringify({"decrypted":`${decryptedMessage}`, "senderName":`${senderName}`, "expirationDate":`${expirationDate}`}); 
+  var withinDate = dateChecker(expirationDate);
+  console.log(expirationDate, withinDate);
+  return JSON.stringify({"decrypted":`${decryptedMessage}`, "senderName":`${senderName}`, "expirationDate":`${expirationDate}`, "withinDate":`${withinDate}`}); 
 }
 
 // Answer API requests.

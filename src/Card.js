@@ -64,25 +64,43 @@ class CardSpot extends Component {
     axios.post('/decrypt', data)
     .then(function (response) {
       var parse = JSON.parse(response.data.decryption)
+      console.log(parse.withinDate)
       // translating new Date Object back into Readable form for React-Tool Calendar
       var showThisDate = parse.expirationDate;
       let exMonth = showThisDate.slice(0, 2);
       let exDay = showThisDate.slice(2, 4);
       let exYear = showThisDate.slice(4, 8);
       showThisDate = new Date(exYear,exMonth-1,exDay);
-      that.setState({
-        encrypted: parse.decrypted, 
-        message: parse.decrypted, 
-        name: parse.senderName,
-        date: parse.expirationDate,
-        showDate: showThisDate
-      })
+      // if date passes, set state
+      if (parse.withinDate === 'true') {
+        that.setState({
+          encrypted: parse.decrypted, 
+          message: parse.decrypted, 
+          name: parse.senderName,
+          date: parse.expirationDate,
+          showDate: showThisDate
+        })
+      } else {
+        that.setState({
+          encrypted: '', 
+          message: 'The message has either expired or is an invalid encrypted message.', 
+          name: '',
+          date: '',
+          showDate: ''
+        })
+      }
       console.log(response.data, parse);
       that.handleToggle();
     })
     .catch(function (error) {
-      that.setState({message: "The message has either expired or is an invalid encrypted message."})
-      that.handleToggle();
+        that.setState({
+          encrypted: '', 
+          message: 'The message has either expired or is an invalid encrypted message.', 
+          name: '',
+          date: '',
+          showDate: ''
+        });      
+        that.handleToggle();
       console.log(error);
     });
   }
@@ -141,22 +159,24 @@ class CardSpot extends Component {
   ];
 
   render() {
+    // sets min date for date Picker to today's date
     const datetime = new Date();
     const min_datetime = new Date(new Date(datetime));
     return (
       <div>
         <div>  
-          <Card style={{width: '450px', margin: '0 auto'}}>
-            <CardTitle
+          <Card style={{width: '500px', margin: '0 auto', padding:'10px'}}>
+            <CardTitle 
               title="Jonathan's Enigma"
+              subtitle="Ensure your Hash URL is correct!"
             />
             <CardMedia
               aspectRatio="wide"
               image="https://placeimg.com/800/450/nature"
             />
-            <CardText>{this.state.encrypted}
+            <CardText>
               <Input type='text' label='Name' value={this.state.name} onChange={this.handleNameChange} maxLength={16} />
-              <Input type='text' label='Message' value={this.state.message} onChange={this.handledMessageChange} maxLength={120} />
+              <Input multiline='true' type='text' label='Message' value={this.state.message} onChange={this.handledMessageChange} maxLength={120} />
              
               <DatePicker label='Expiration date' 
               sundayFirstDayOfWeek 
@@ -170,7 +190,7 @@ class CardSpot extends Component {
             <CardActions theme={theme}>     
 
               {/*Creating a toggle box for the encryted message*/}
-              <Button label='Encrypt' onClick={this.encryptMessage} />
+              <Button raised label='Encrypt' onClick={this.encryptMessage} />
               <Dialog
                 actions={this.actions2}
                 active={this.state.active2}
@@ -178,11 +198,12 @@ class CardSpot extends Component {
                 onOverlayClick={this.handleToggle2}
                 title='Encrypt'
               >
-                <p>{this.state.encrypted}</p>
+                <h3>Copy the code and Passphrase, careful not to copy the whitespace at the end of the code.</h3>
+                <p id="encryptMessage">{this.state.encrypted}</p>
               </Dialog>
 
               {/*Creating a toggle box for the decrypted message*/}
-              <Button label='Decrypt' onClick={this.handleToggle} />
+              <Button raised label='Decrypt' onClick={this.handleToggle} />
               <Dialog
                 actions={this.actions}
                 active={this.state.active}
@@ -190,12 +211,12 @@ class CardSpot extends Component {
                 onOverlayClick={this.handleToggle}
                 title='Decrypt'
               >
-                <h3>Input the encrypted message below and ensure the key is correct.</h3>
-                <Input type='text' label='Encrypted Message' value={this.state.decryptMessage} onChange={this.handleDecryptMessageChange} maxLength={120} />
+                <h3 class='text'>Input the encrypted message below and ensure the key is correct.</h3>
+                <Input multiline='true' type='text' label='Encrypted Message' value={this.state.decryptMessage} onChange={this.handleDecryptMessageChange} />
               </Dialog>
-              <Button label="Change Key" onMouseDown={()=>this.newKey()}/>
+              <Button raised label="Change Key" onMouseDown={()=>this.newKey()}/>
             </CardActions>
-            <div>Your Passphrase - {this.state.key}</div>
+            <div><h3>Your Passphrase - {this.state.key}</h3></div>
           </Card>     
         </div>
       </div>
