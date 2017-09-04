@@ -214,7 +214,7 @@ class CardSpot extends Component {
               </Dialog>
               <Button raised label="Change Passphrase" onMouseDown={()=>this.newKey()}/>
             </CardActions>
-            <div><h3>Your Passphrase - {this.state.key}</h3></div>
+            <div><h3>Your Passphrase - {window.location.hash}</h3></div>
           </Card>     
         </div>
       </div>
