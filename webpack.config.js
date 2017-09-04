@@ -13,6 +13,7 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel',
+        include: path.join(__dirname, 'src'),
         exclude: /node_modules/,
         query: {
           presets: ['es2015', 'react']
@@ -33,5 +34,9 @@ module.exports = {
       path.resolve(__dirname, 'src')
     ],
     extensions: ['.js', '.json', '.jsx'],
-  }
+  },
+  resolveLoader: {
+    moduleExtensions: ['-loader']
+  },
+
 };
