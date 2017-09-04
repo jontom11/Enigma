@@ -18,7 +18,7 @@ app.use(express.static(path.resolve(__dirname, '../build')));
 
 //returns boolean whether expiration date is beyond current date
 const dateChecker = function(expirationDate) {
-  let currentDate = JSON.stringify(new Date);
+  var currentDate = JSON.stringify(new Date);
   let currMonth = currentDate.slice(6, 8);
   let currDay = currentDate.slice(9, 11);
   let currYear = currentDate.slice(1, 5);

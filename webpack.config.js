@@ -2,7 +2,7 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
-  entry: './server/server.js',
+  entry: './src/index.js',
   output: {
     path: __dirname,
     filename: 'bundle.js',
@@ -16,7 +16,7 @@ module.exports = {
         include: path.join(__dirname, 'src'),
         exclude: /node_modules/,
         query: {
-          presets: ['es2015', 'react', 'stage-3', {"modules":false}]
+          presets: ['es2015', 'react']
         }
       }, 
       {
