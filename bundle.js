@@ -26415,7 +26415,7 @@ var CardSpot = function (_Component) {
                 },
                 _react2.default.createElement(
                   'h5',
-                  { 'class': 'text' },
+                  null,
                   'Input the encrypted message below and ensure the passphrase is correct for the hash url.'
                 ),
                 _react2.default.createElement(_input2.default, { multiline: 'true', type: 'text', label: 'Encrypted Message', value: this.state.decryptMessage, onChange: this.handleDecryptMessageChange })

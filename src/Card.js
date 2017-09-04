@@ -209,7 +209,7 @@ class CardSpot extends Component {
                 onOverlayClick={this.handleToggle}
                 title='Decrypt'
               >
-                <h5 class='text'>Input the encrypted message below and ensure the passphrase is correct for the hash url.</h5>
+                <h5>Input the encrypted message below and ensure the passphrase is correct for the hash url.</h5>
                 <Input multiline='true' type='text' label='Encrypted Message' value={this.state.decryptMessage} onChange={this.handleDecryptMessageChange} />
               </Dialog>
               <Button raised label="Change Passphrase" onMouseDown={()=>this.newKey()}/>
