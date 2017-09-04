@@ -12,12 +12,15 @@ module.exports = {
     loaders: [
       {
         test: /\.js$/,
-        loader: 'babel',
         include: path.join(__dirname, 'src'),
         exclude: /node_modules/,
-        query: {
-          presets: ['es2015', 'react']
-        }
+        use: [
+          { loader: 'babel-loader',
+            options: {
+              presets: ['react', 'es2015'],
+            }
+          }
+        ]
       }, 
       {
         test: /\.css$/,
@@ -34,9 +37,5 @@ module.exports = {
       path.resolve(__dirname, 'src')
     ],
     extensions: ['.js', '.json', '.jsx'],
-  },
-  resolveLoader: {
-    moduleExtensions: ['-loader']
-  },
-
+  }
 };
