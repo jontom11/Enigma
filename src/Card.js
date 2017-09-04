@@ -148,20 +148,13 @@ class CardSpot extends Component {
     this.setState({date: newDate})
     this.setState({showDate:value})
   }
- 
-  actions = [
-    { label: "Cancel", onClick: this.handleToggle.bind(this) },
-    { label: "Decrypt", onClick: this.decryptMessage.bind(this) }
-  ];
-  
-  actions2 = [
-    { label: "OK", onClick: this.handleToggle2.bind(this) },
-  ];
 
   render() {
+
     // sets min date for date Picker to today's date
     const datetime = new Date();
     const min_datetime = new Date(new Date(datetime));
+    
     return (
       <div>
         <div>  
@@ -192,7 +185,9 @@ class CardSpot extends Component {
               {/*Creating a toggle box for the encryted message*/}
               <Button raised label='Encrypt' onClick={this.encryptMessage} />
               <Dialog
-                actions={this.actions2}
+                actions={[
+                  { label: "OK", onClick: this.handleToggle2.bind(this) },
+                ]}
                 active={this.state.active2}
                 onEscKeyDown={this.handleToggle2}
                 onOverlayClick={this.handleToggle2}
@@ -205,7 +200,10 @@ class CardSpot extends Component {
               {/*Creating a toggle box for the decrypted message*/}
               <Button raised label='Decrypt' onClick={this.handleToggle} />
               <Dialog
-                actions={this.actions}
+                actions={[
+                  { label: "Cancel", onClick: this.handleToggle.bind(this) },
+                  { label: "Decrypt", onClick: this.decryptMessage.bind(this) }
+                ]}
                 active={this.state.active}
                 onEscKeyDown={this.handleToggle}
                 onOverlayClick={this.handleToggle}
