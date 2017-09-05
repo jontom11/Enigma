@@ -8,14 +8,13 @@ import axios from 'axios';
 import queryString from 'querystring';
 import Dialog from 'react-toolbox/lib/dialog/Dialog';
 
-
 class CardSpot extends Component {
   constructor () {
     super();
     this.state = {
       name: '', 
       message: '', 
-      encrypted:'Encryption will show here', 
+      encrypted:'', 
       key:'',
       date: '', 
       showDate: '',
@@ -24,18 +23,19 @@ class CardSpot extends Component {
       decryptMessage:''};
 
     this.handleNameChange = this.handleNameChange.bind(this);
-    this.handledMessageChange = this.handledMessageChange.bind(this);
+    this.handleMessageChange = this.handleMessageChange.bind(this);
     this.encryptMessage = this.encryptMessage.bind(this);
     this.decryptMessage = this.decryptMessage.bind(this);
     this.newKey = this.newKey.bind(this);
     this.handleDateChange = this.handleDateChange.bind(this);
-    this.handleToggle = this.handleToggle.bind(this);
-    this.handleToggle2 = this.handleToggle2.bind(this);
+    this.handleDecryptDialogBoxToggle = this.handleDecryptDialogBoxToggle.bind(this);
+    this.handleEncryptDialogBoxToggle = this.handleEncryptDialogBoxToggle.bind(this);
     this.handleDecryptMessageChange = this.handleDecryptMessageChange.bind(this);
   }
 
   encryptMessage() {
     var that = this;
+    // use queryString is strigify data being sent via axios post.    
     let data = queryString.stringify({
       "name":`${this.state.name}`,
       "message": `${that.state.message}`,
@@ -45,13 +45,12 @@ class CardSpot extends Component {
     axios.post('/encrypt', data)
     .then(function (response) {
       that.setState({encrypted: response.data.encryption})
-      console.log(response.data.encryption); 
-      that.handleToggle2();
+      that.handleEncryptDialogBoxToggle();
     })
     .catch(function (error) {
       that.setState({message: "The message has either expired or is an invalid encrypted message."});
-      that.handleToggle2();
-      console.log(error);
+      that.handleEncryptDialogBoxToggle();
+      // console.log(error);
     });
   }
 
@@ -64,14 +63,13 @@ class CardSpot extends Component {
     axios.post('/decrypt', data)
     .then(function (response) {
       var parse = JSON.parse(response.data.decryption)
-      console.log(parse.withinDate)
       // translating new Date Object back into Readable form for React-Tool Calendar
       var showThisDate = parse.expirationDate;
       let exMonth = showThisDate.slice(0, 2);
       let exDay = showThisDate.slice(2, 4);
       let exYear = showThisDate.slice(4, 8);
       showThisDate = new Date(exYear,exMonth-1,exDay);
-      // if date passes, set state
+      // if current date is before or on expiration date, withinDate will be true
       if (parse.withinDate === 'true') {
         that.setState({
           encrypted: parse.decrypted, 
@@ -81,16 +79,10 @@ class CardSpot extends Component {
           showDate: showThisDate
         })
       } else {
-        that.setState({
-          encrypted: '', 
-          message: 'The message has either expired or is an invalid encrypted message.', 
-          name: '',
-          date: '',
-          showDate: ''
-        })
+        // if date is less, throw error to catch
+        throw '';
       }
-      console.log(response.data, parse);
-      that.handleToggle();
+      that.handleDecryptDialogBoxToggle();
     })
     .catch(function (error) {
         that.setState({
@@ -100,8 +92,8 @@ class CardSpot extends Component {
           date: '',
           showDate: ''
         });      
-        that.handleToggle();
-      console.log(error);
+        that.handleDecryptDialogBoxToggle();
+      // console.log(error);
     });
   }
   
@@ -117,12 +109,12 @@ class CardSpot extends Component {
   }
   
   //handles Encrypt toggle
-  handleToggle() {
+  handleDecryptDialogBoxToggle() {
     this.setState({active: !this.state.active});
   }
    
   //handles decrypt toggle
-  handleToggle2() {
+  handleEncryptDialogBoxToggle() {
     this.setState({active2: !this.state.active2});
   }
   
@@ -130,7 +122,7 @@ class CardSpot extends Component {
     this.setState({name: value})
   }
 
-  handledMessageChange(value) {
+  handleMessageChange(value) {
     this.setState({message: value})
   }
   
@@ -150,11 +142,10 @@ class CardSpot extends Component {
   }
 
   render() {
-
     // sets min date for date Picker to today's date
     const datetime = new Date();
     const min_datetime = new Date(new Date(datetime));
-    
+  
     return (
       <div>
         <div>  
@@ -169,49 +160,48 @@ class CardSpot extends Component {
             />
             <CardText>
               <Input type='text' label='Name' value={this.state.name} onChange={this.handleNameChange} maxLength={16} />
-              <Input multiline='true' type='text' label='Message' value={this.state.message} onChange={this.handledMessageChange} maxLength={120} />
-             
+              <Input multiline='true' type='text' label='Message' value={this.state.message} onChange={this.handleMessageChange} maxLength={120} />
               <DatePicker label='Expiration date' 
-              sundayFirstDayOfWeek 
-              minDate={min_datetime} 
-              onChange={this.handleDateChange} 
-              value={this.state.showDate}
-              autoOk='true' 
+                sundayFirstDayOfWeek 
+                minDate={min_datetime} 
+                onChange={this.handleDateChange} 
+                value={this.state.showDate}
+                autoOk='true' 
               />
-
             </CardText>
-            <CardActions theme={theme}>     
 
-              {/*Creating a toggle box for the encryted message*/}
+            <CardActions theme={theme}>     
+              {/*Creating a Dialog box for the encryted message*/}
               <Button raised label='Encrypt' onClick={this.encryptMessage} />
               <Dialog
                 actions={[
-                  { label: "OK", onClick: this.handleToggle2.bind(this) },
+                  { label: "OK", onClick: this.handleEncryptDialogBoxToggle.bind(this) },
                 ]}
                 active={this.state.active2}
-                onEscKeyDown={this.handleToggle2}
-                onOverlayClick={this.handleToggle2}
+                onEscKeyDown={this.handleEncryptDialogBoxToggle}
+                onOverlayClick={this.handleEncryptDialogBoxToggle}
                 title='Encrypted Message'
               >
                 <h5>Copy the code and Passphrase, careful not to copy the whitespace at the end of the code.</h5>
                 <p id="encryptMessage">{this.state.encrypted}</p>
               </Dialog>
 
-              {/*Creating a toggle box for the decrypted message*/}
-              <Button raised label='Decrypt' onClick={this.handleToggle} />
+              {/*Creating a Dialog box for the decrypted message*/}
+              <Button raised label='Decrypt' onClick={this.handleDecryptDialogBoxToggle} />
               <Dialog
                 actions={[
-                  { label: "Cancel", onClick: this.handleToggle.bind(this) },
+                  { label: "Cancel", onClick: this.handleDecryptDialogBoxToggle.bind(this) },
                   { label: "Decrypt", onClick: this.decryptMessage.bind(this) }
                 ]}
                 active={this.state.active}
-                onEscKeyDown={this.handleToggle}
-                onOverlayClick={this.handleToggle}
+                onEscKeyDown={this.handleDecryptDialogBoxToggle}
+                onOverlayClick={this.handleDecryptDialogBoxToggle}
                 title='Decrypt'
               >
                 <h5>Input the encrypted message below and ensure the passphrase is correct for the hash url.</h5>
                 <Input multiline='true' type='text' label='Encrypted Message' value={this.state.decryptMessage} onChange={this.handleDecryptMessageChange} />
               </Dialog>
+
               <Button raised label="Change Passphrase" onMouseDown={()=>this.newKey()}/>
             </CardActions>
             <div><h3>Your Passphrase - {window.location.hash}</h3></div>
