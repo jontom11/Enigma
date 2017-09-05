@@ -70,7 +70,14 @@ class CardSpot extends Component {
       let exYear = showThisDate.slice(4, 8);
       showThisDate = new Date(exYear,exMonth-1,exDay);
       // if current date is before or on expiration date, withinDate will be true
-      if (parse.withinDate === 'true') {
+      // if no date was provided during encryption, return a much later date, this one in year 2100
+      if (parse.withinDate === 'true' || parse.expirationDate === '') {
+        var dateExists = true;
+        var blankDate = new Date (2100, 0, 1)
+        if (showThisDate = ' ') {
+          console.log('Im in!')
+          dateExists = false;
+        }
         that.setState({
           encrypted: parse.decrypted, 
           message: parse.decrypted, 
@@ -78,6 +85,10 @@ class CardSpot extends Component {
           date: parse.expirationDate,
           showDate: showThisDate
         })
+        console.log(dateExists, blankDate);
+        if (!dateExists) {
+          that.setState({date: blankDate});
+        }
       } else {
         // if date is less, throw error to catch
         throw '';
