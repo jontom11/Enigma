@@ -43,11 +43,11 @@ class CardSpot extends Component {
       "key": `${window.location.hash}`
     })
     axios.post('/encrypt', data)
-    .then(function (response) {
+    .then((response) => {
       that.setState({encrypted: response.data.encryption})
       that.handleEncryptDialogBoxToggle();
     })
-    .catch(function (error) {
+    .catch((error) => {
       that.setState({message: "The message has either expired or is an invalid encrypted message."});
       that.handleEncryptDialogBoxToggle();
       // console.log(error);
@@ -61,7 +61,7 @@ class CardSpot extends Component {
       "key":`${window.location.hash}`
     });
     axios.post('/decrypt', data)
-    .then(function (response) {
+    .then((response) => {
       var parse = JSON.parse(response.data.decryption)
       // translating new Date Object back into Readable form for React-Tool Calendar
       var showThisDate = parse.expirationDate;
@@ -98,7 +98,7 @@ class CardSpot extends Component {
       }
       that.handleDecryptDialogBoxToggle();
     })
-    .catch(function (error) {
+    .catch((error) => {
         that.setState({
           encrypted: '', 
           message: 'The message has either expired or is an invalid encrypted message.', 
@@ -216,7 +216,7 @@ class CardSpot extends Component {
                 <Input multiline='true' type='text' label='Encrypted Message' value={this.state.decryptMessage} onChange={this.handleDecryptMessageChange} />
               </Dialog>
 
-              <Button raised label="Change Passphrase" onMouseDown={()=>this.newKey()}/>
+              <Button raised label="Change Passphrase" onMouseDown={()=>this.newKey()} />
             </CardActions>
             <div><h3>Your Passphrase - {window.location.hash}</h3></div>
           </Card>     
